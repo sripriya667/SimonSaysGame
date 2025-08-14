@@ -51,7 +51,7 @@ function checkAnswer(currentLevel){
     else{
         playSound("wrong");
         $("body").addClass("game-over");
-        $("#level-title").text("Game Over,Press Any Key to Restart");
+        $("#level-title").text(`Game Over, Your score is ${level - 1} Press Any Key to Restart`);
         setTimeout(function(){
             $("body").removeClass("game-over");
         },200);
