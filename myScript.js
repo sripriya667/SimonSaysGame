@@ -1,11 +1,10 @@
-
 var buttonColours = ["red","blue","green","yellow"];
 var gamePattern = [];
 var userClickedPattern = [];
 var start = false;
 var level = 0;
+
 function nextSequence(){
-    
     userClickedPattern=[];
     level++;
     $("#level-title").text("Level "+level);
@@ -15,31 +14,41 @@ function nextSequence(){
 
     $("#"+randomChosenColor).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
     playSound(randomChosenColor);
-    
 }
-$(".btn").click(function(){
+
+// Handle both click and touch events
+$(".btn").on("click touchstart", function(e){
+    e.preventDefault();
+    e.stopPropagation();
     var userChosenColor = $(this).attr("id");
     userClickedPattern.push(userChosenColor);
     playSound(userChosenColor);
     animatePress(userChosenColor);
     checkAnswer(userClickedPattern.length-1);
 });
+
 function animatePress(currentColor){
     $("#"+currentColor).addClass("pressed");
     setTimeout(function(){
         $("#"+currentColor).removeClass("pressed");
     },100);
 }
+
 function playSound(randomChosenColor){
     var audio = new Audio("sounds/"+randomChosenColor+".mp3");
     audio.play();
 }
-$(document).keypress(function(){
+
+// Handle both keyboard and touch events to start the game
+$(document).on("keypress touchstart", function(e){
     if (start==false){
+        e.preventDefault();
+        e.stopPropagation();
         nextSequence();
         start=true;
     }
 });
+
 function checkAnswer(currentLevel){
     if(gamePattern[currentLevel]==userClickedPattern[currentLevel]){
         if(gamePattern.length==userClickedPattern.length){    
@@ -64,3 +73,16 @@ function startOver(){
     gamePattern=[];
     start = false;
 }
+
+// Additional mobile-specific event handling
+$(document).ready(function() {
+    // Prevent double-tap zoom on mobile
+    $(".btn").on("touchend", function(e) {
+        e.preventDefault();
+    });
+    
+    // Ensure touch events don't interfere with game logic
+    $(".btn").on("touchmove", function(e) {
+        e.preventDefault();
+    });
+});
